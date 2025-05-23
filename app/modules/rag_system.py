@@ -27,7 +27,6 @@ except ImportError:
     print("⚠️  Tesseract non disponibile - OCR immagini disabilitato")
     TESSERACT_AVAILABLE = False
 
-# Resto degli import (lascia tutto uguale)
 from langchain_chroma import Chroma 
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -231,44 +230,6 @@ def parse_pdf_enhanced(pdf_path: str) -> Tuple[str, List[Dict[str, Any]], Dict[s
             elif len(page_text.strip()) < 50:
                 logger.debug(f"Pagina {page_num + 1} ha poco testo ma OCR non disponibile - saltando")
             
-            # Estrai immagini (solo se la pagina ha già testo E OCR è disponibile)
-            if TESSERACT_CONFIGURED:
-                image_list = page.get_images(full=True)
-                
-                for img_index, img_info_tuple in enumerate(image_list):
-                    xref = img_info_tuple[0]
-                    
-                    try:
-                        pix = fitz.Pixmap(doc, xref)
-                        image_bytes = pix.tobytes("png")
-                        pix = None  # Libera memoria
-                        
-                        if image_bytes:
-                            # Preprocessa l'immagine per OCR
-                            processed_bytes = preprocess_image_for_ocr(image_bytes) if TESSERACT_AVAILABLE else image_bytes
-                            
-                            # Info sul bounding box
-                            bbox_info = None 
-                            try:
-                                img_rects = page.get_image_rects(img_info_tuple)
-                                if img_rects and isinstance(img_rects[0], fitz.Rect):
-                                    bbox_info = img_rects[0].irect
-                            except Exception as e_bbox:
-                                logger.debug(f"Impossibile ottenere bbox per immagine: {e_bbox}")
-                            
-                            images_data.append({
-                                "page_number": page_num + 1,
-                                "image_index_on_page": img_index,
-                                "image_bytes": processed_bytes,
-                                "image_format": "PNG",
-                                "xref": xref,
-                                "bbox": bbox_info,
-                                "page_has_text": len(page_text.strip()) > 50
-                            })
-                    except Exception as e_img:
-                        logger.error(f"Errore nell'estrazione immagine xref {xref}: {e_img}")
-                        continue
-                        
         except Exception as e_page:
             logger.error(f"Errore nella pagina {page_num + 1}: {e_page}")
             continue
@@ -314,11 +275,16 @@ class OptimizedRAGSystem:
         logger.info(f"Istanza OptimizedRAGSystem creata. Mock: {self.use_mock}, Collection: {self.collection_name}")
         logger.debug(f"Configurazione RAG: {self.config}")
         
-        # Log dello stato di Tesseract
-        if TESSERACT_AVAILABLE and TESSERACT_CONFIGURED:
+        # Log dello stato di Tesseract e PyMuPDF
+        if TESSERACT_CONFIGURED:
             logger.info("Tesseract OCR disponibile e configurato")
         else:
             logger.warning("Tesseract OCR non disponibile - L'estrazione testo da immagini sara disabilitata")
+            
+        if PYMUPDF_AVAILABLE:
+            logger.info("PyMuPDF disponibile - elaborazione PDF attiva")
+        else:
+            logger.warning("PyMuPDF non disponibile - elaborazione PDF disabilitata")
 
     @measure_performance_async("rag_setup_optimized")
     async def setup_rag_system_async(self):
@@ -435,7 +401,7 @@ class OptimizedRAGSystem:
                     file_text_content = pdf_text
                     current_file_metadata.update(extracted_pdf_metadata)
                     
-                    if images_data and TESSERACT_AVAILABLE and TESSERACT_CONFIGURED:
+                    if images_data and TESSERACT_CONFIGURED:
                         logger.info(f"[PID:{pid}] RAG_CLASS._load_split: Trovate {len(images_data)} immagini in '{doc_file}'. Esecuzione OCR...")
                         ocr_texts_for_doc = []
                         
@@ -469,7 +435,7 @@ class OptimizedRAGSystem:
                         if ocr_texts_for_doc:
                             file_text_content += "\n\n" + "\n".join(ocr_texts_for_doc)
                             logger.info(f"[PID:{pid}] RAG_CLASS._load_split: Aggiunto testo OCR da {len(ocr_texts_for_doc)} immagini per '{doc_file}'.")
-                    elif images_data and not (TESSERACT_AVAILABLE and TESSERACT_CONFIGURED):
+                    elif images_data and not TESSERACT_CONFIGURED:
                         logger.warning(f"[PID:{pid}] RAG_CLASS._load_split: {len(images_data)} immagini trovate ma OCR non disponibile")
                         
                 except Exception as e:
@@ -579,7 +545,7 @@ class OptimizedRAGSystem:
         pid = os.getpid()
         if self.use_mock:
             logger.info(f"[PID:{pid}] RAG MOCK: query '{query}'")
-            mock_text = f"Risposta MOCK per '{query}'."
+            mock_text = f"Risposta MOCK per '{query}'. Questo è un sistema di demo per mostrare le funzionalità del chatbot assicurativo."
             await rag_smart_cache.set(query, {"response": mock_text, "sources": [{"source": "mock.txt"}]})
             return {"response": mock_text, "sources": [{"source": "mock.txt"}]}
         if not self.is_initialized or not self.qa_chain:
@@ -619,8 +585,9 @@ class OptimizedRAGSystem:
                 "docs_directory": self.config["DOCS_DIRECTORY"],
                 "chroma_persist_directory": self.chroma_persist_directory,
                 "collection_name": self.collection_name,
-                "ocr_available": TESSERACT_AVAILABLE and TESSERACT_CONFIGURED,
-                "ocr_language": self.config.get("TESSERACT_LANG", "ita") if (TESSERACT_AVAILABLE and TESSERACT_CONFIGURED) else "N/A"
+                "ocr_available": TESSERACT_CONFIGURED,
+                "ocr_language": self.config.get("TESSERACT_LANG", "ita") if TESSERACT_CONFIGURED else "N/A",
+                "pymupdf_available": PYMUPDF_AVAILABLE
             },
             "cache": cache_stats, 
             "vectorstore": {"status": "Non disponibile", "collection_count": 0}
@@ -663,7 +630,12 @@ async def init_rag_system() -> Optional[OptimizedRAGSystem]:
     return instance
 
 # Test rapido all'importazione
-if TESSERACT_AVAILABLE and TESSERACT_CONFIGURED:
+if TESSERACT_CONFIGURED:
     logger.info("Modulo OCR pronto per l'uso")
 else:
-    logger.warning("Modulo OCR non disponibile - verificare installazione Tesseract e PyMuPDF")
+    logger.warning("Modulo OCR non disponibile - verificare installazione Tesseract")
+    
+if PYMUPDF_AVAILABLE:
+    logger.info("Modulo PyMuPDF pronto per l'uso")
+else:
+    logger.warning("Modulo PyMuPDF non disponibile - elaborazione PDF disabilitata")
