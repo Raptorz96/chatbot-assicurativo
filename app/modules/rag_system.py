@@ -1,14 +1,33 @@
 import os
 import asyncio
+import io
 from typing import List, Dict, Any, Optional, Tuple
 
-import fitz  # PyMuPDF
-import io
+# OCR Imports con fallback sicuro per deploy
+try:
+    import fitz  # PyMuPDF
+    PYMUPDF_AVAILABLE = True
+    print("✅ PyMuPDF disponibile - OCR PDF attivo")
+except ImportError:
+    print("⚠️  PyMuPDF non disponibile - PDF OCR disabilitato (modalità compatibilità)")
+    PYMUPDF_AVAILABLE = False
+    # Crea un fitz mock per evitare errori
+    class MockFitz:
+        @staticmethod
+        def open(path):
+            raise ImportError("PyMuPDF non disponibile")
+    fitz = MockFitz()
 
-# Importazioni per OCR
-import pytesseract
-from PIL import Image 
+try:
+    import pytesseract
+    from PIL import Image 
+    TESSERACT_AVAILABLE = True
+    print("✅ Tesseract disponibile - OCR immagini attivo")
+except ImportError:
+    print("⚠️  Tesseract non disponibile - OCR immagini disabilitato")
+    TESSERACT_AVAILABLE = False
 
+# Resto degli import (lascia tutto uguale)
 from langchain_chroma import Chroma 
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -36,40 +55,22 @@ from app.utils.performance_monitor import performance_monitor, measure_performan
 from app.utils.smart_cache import smart_cache as rag_smart_cache
 from app.utils.text_processing import load_spacy_model, normalize_text, NLP_MODEL_NAME as SPACY_MODEL_FOR_NORMALIZATION
 
-# --- Configurazione Percorso Tesseract ---
-TESSERACT_EXECUTABLE_PATH = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-
-# Configurazione all'avvio
-try:
-    if os.path.exists(TESSERACT_EXECUTABLE_PATH):
-        pytesseract.pytesseract.tesseract_cmd = TESSERACT_EXECUTABLE_PATH
-        
-        # Verifica che funzioni
-        try:
-            # Test semplice con subprocess per verificare che tesseract funzioni
-            import subprocess
-            result = subprocess.run([TESSERACT_EXECUTABLE_PATH, '--list-langs'], 
-                                  capture_output=True, text=True, check=True)
-            available_langs = result.stdout
-            
-            if 'ita' in available_langs:
-                logger.info(f"Tesseract configurato correttamente")
-                logger.info(f"Italiano (ita) disponibile per OCR")
-                TESSERACT_CONFIGURED = True
-            else:
-                logger.error("Tesseract configurato ma italiano non disponibile")
-                TESSERACT_CONFIGURED = False
-        except Exception as e:
-            logger.error(f"Errore verifica Tesseract: {e}")
-            TESSERACT_CONFIGURED = False
-    else:
-        logger.error(f"Tesseract non trovato in: {TESSERACT_EXECUTABLE_PATH}")
+# Configurazione Tesseract con fallback
+if TESSERACT_AVAILABLE:
+    TESSERACT_EXECUTABLE_PATH = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+    try:
+        if os.path.exists(TESSERACT_EXECUTABLE_PATH):
+            pytesseract.pytesseract.tesseract_cmd = TESSERACT_EXECUTABLE_PATH
+        # Test per Linux/Railway
+        import subprocess
+        result = subprocess.run(['tesseract', '--version'], capture_output=True, text=True)
+        TESSERACT_CONFIGURED = True
+        logger.info("Tesseract configurato correttamente")
+    except Exception as e:
+        logger.warning(f"Tesseract non configurato correttamente: {e}")
         TESSERACT_CONFIGURED = False
-except Exception as e:
-    logger.error(f"Errore configurazione Tesseract: {e}")
+else:
     TESSERACT_CONFIGURED = False
-
-# --- Fine Configurazione Percorso Tesseract ---
 
 DEFAULT_PROMPT_TEMPLATE = """
 Sei un assistente AI per una compagnia di assicurazioni. Utilizza le seguenti informazioni di contesto per rispondere alla domanda dell'utente.
@@ -85,35 +86,31 @@ Risposta utile:"""
 
 def ocr_image(image_bytes: bytes, language: str = "ita") -> str:
     """
-    Esegue OCR su un'immagine
-    
-    Args:
-        image_bytes: Bytes dell'immagine
-        language: Lingua per l'OCR (default: ita)
-        
-    Returns:
-        Testo estratto o stringa vuota se errore
+    Esegue OCR su un'immagine (con fallback sicuro)
     """
     if not TESSERACT_CONFIGURED:
-        logger.error("Tesseract non configurato. OCR non disponibile.")
+        logger.warning("Tesseract non configurato. OCR non disponibile.")
+        return ""
+    
+    if not TESSERACT_AVAILABLE:
+        logger.warning("Tesseract non installato. OCR saltato.")
         return ""
     
     try:
         img = Image.open(io.BytesIO(image_bytes))
         
-        # Configurazione esplicita del percorso tessdata
-        import os
-        original_env = os.environ.get('TESSDATA_PREFIX')
-        os.environ['TESSDATA_PREFIX'] = r'C:\Program Files\Tesseract-OCR\tessdata'
-        
+        # Test per environment Railway/Linux
         try:
             text = pytesseract.image_to_string(img, lang=language)
-        finally:
-            # Ripristina l'ambiente originale
-            if original_env is not None:
-                os.environ['TESSDATA_PREFIX'] = original_env
-            elif 'TESSDATA_PREFIX' in os.environ:
-                del os.environ['TESSDATA_PREFIX']
+        except Exception as e_tesseract:
+            logger.warning(f"Errore Tesseract con lingua {language}: {e_tesseract}")
+            # Fallback a inglese
+            try:
+                text = pytesseract.image_to_string(img, lang='eng')
+                logger.info("OCR fallback a inglese riuscito")
+            except Exception as e_eng:
+                logger.error(f"OCR fallback fallito: {e_eng}")
+                return ""
         
         # Log per debug
         if text.strip():
@@ -123,20 +120,18 @@ def ocr_image(image_bytes: bytes, language: str = "ita") -> str:
             
         return text.strip()
         
-    except pytesseract.TesseractNotFoundError:
-        logger.error("Tesseract non trovato.")
-        return ""
-    except pytesseract.TesseractError as e:
-        logger.error(f"Errore Tesseract: {e}")
-        return ""
     except Exception as e:
         logger.error(f"Errore generico durante l'OCR: {e}")
         return ""
 
 def preprocess_image_for_ocr(image_bytes: bytes) -> bytes:
     """
-    Preprocessa un'immagine per migliorare i risultati OCR
+    Preprocessa un'immagine per migliorare i risultati OCR (con fallback)
     """
+    if not TESSERACT_AVAILABLE:
+        logger.debug("PIL non disponibile per preprocessing - ritorno immagine originale")
+        return image_bytes
+        
     try:
         img = Image.open(io.BytesIO(image_bytes))
         
@@ -169,8 +164,12 @@ def preprocess_image_for_ocr(image_bytes: bytes) -> bytes:
 
 def parse_pdf_enhanced(pdf_path: str) -> Tuple[str, List[Dict[str, Any]], Dict[str, Any]]:
     """
-    Parsing avanzato di PDF con OCR migliorato
+    Parsing avanzato di PDF con OCR migliorato (con fallback per deploy)
     """
+    if not PYMUPDF_AVAILABLE:
+        logger.warning(f"PyMuPDF non disponibile - saltando elaborazione PDF: {pdf_path}")
+        return "", [], {"error": "PyMuPDF non disponibile", "file_path": pdf_path}
+    
     full_text = ""
     images_data = []
     pdf_metadata = {}
@@ -179,7 +178,7 @@ def parse_pdf_enhanced(pdf_path: str) -> Tuple[str, List[Dict[str, Any]], Dict[s
         doc = fitz.open(pdf_path)
     except Exception as e:
         logger.error(f"Errore nell'apertura del file PDF '{pdf_path}': {e}")
-        return "", [], {}
+        return "", [], {"error": str(e), "file_path": pdf_path}
 
     # Estrai metadata
     doc_meta = doc.metadata
@@ -207,67 +206,69 @@ def parse_pdf_enhanced(pdf_path: str) -> Tuple[str, List[Dict[str, Any]], Dict[s
             page_text = page.get_text("text")
             full_text += page_text + "\n"
             
-            # Se la pagina ha poco testo, usa OCR sull'intera pagina invece che sui frammenti
-            if len(page_text.strip()) < 50:
+            # Se la pagina ha poco testo E l'OCR è disponibile, usa OCR
+            if len(page_text.strip()) < 50 and TESSERACT_CONFIGURED:
                 logger.debug(f"Pagina {page_num + 1} ha poco testo ({len(page_text.strip())} caratteri), applicando OCR all'intera pagina")
                 
-                if TESSERACT_CONFIGURED:
-                    # Converti l'intera pagina in immagine ad alta risoluzione
-                    mat = fitz.Matrix(2.0, 2.0)  # 2x risoluzione per migliorare OCR
-                    pix = page.get_pixmap(matrix=mat)
-                    img_data = pix.tobytes("png")
-                    pix = None
-                    
-                    # Aggiungi questa pagina per OCR
-                    images_data.append({
-                        "page_number": page_num + 1,
-                        "image_index_on_page": 0,
-                        "image_bytes": img_data,
-                        "image_format": "PNG",
-                        "xref": -1,  # Indica che è l'intera pagina
-                        "bbox": None,
-                        "page_has_text": False,
-                        "is_full_page": True
-                    })
-                    continue  # Salta l'estrazione dei frammenti
-            
-            # Estrai immagini (solo se la pagina ha già testo)
-            image_list = page.get_images(full=True)
-            
-            for img_index, img_info_tuple in enumerate(image_list):
-                xref = img_info_tuple[0]
+                # Converti l'intera pagina in immagine ad alta risoluzione
+                mat = fitz.Matrix(2.0, 2.0)  # 2x risoluzione per migliorare OCR
+                pix = page.get_pixmap(matrix=mat)
+                img_data = pix.tobytes("png")
+                pix = None
                 
-                try:
-                    pix = fitz.Pixmap(doc, xref)
-                    image_bytes = pix.tobytes("png")
-                    pix = None  # Libera memoria
+                # Aggiungi questa pagina per OCR
+                images_data.append({
+                    "page_number": page_num + 1,
+                    "image_index_on_page": 0,
+                    "image_bytes": img_data,
+                    "image_format": "PNG",
+                    "xref": -1,  # Indica che è l'intera pagina
+                    "bbox": None,
+                    "page_has_text": False,
+                    "is_full_page": True
+                })
+                continue  # Salta l'estrazione dei frammenti
+            elif len(page_text.strip()) < 50:
+                logger.debug(f"Pagina {page_num + 1} ha poco testo ma OCR non disponibile - saltando")
+            
+            # Estrai immagini (solo se la pagina ha già testo E OCR è disponibile)
+            if TESSERACT_CONFIGURED:
+                image_list = page.get_images(full=True)
+                
+                for img_index, img_info_tuple in enumerate(image_list):
+                    xref = img_info_tuple[0]
                     
-                    if image_bytes:
-                        # Preprocessa l'immagine per OCR
-                        processed_bytes = preprocess_image_for_ocr(image_bytes)
+                    try:
+                        pix = fitz.Pixmap(doc, xref)
+                        image_bytes = pix.tobytes("png")
+                        pix = None  # Libera memoria
                         
-                        # Info sul bounding box
-                        bbox_info = None 
-                        try:
-                            img_rects = page.get_image_rects(img_info_tuple)
-                            if img_rects and isinstance(img_rects[0], fitz.Rect):
-                                bbox_info = img_rects[0].irect
-                        except Exception as e_bbox:
-                            logger.debug(f"Impossibile ottenere bbox per immagine: {e_bbox}")
+                        if image_bytes:
+                            # Preprocessa l'immagine per OCR
+                            processed_bytes = preprocess_image_for_ocr(image_bytes) if TESSERACT_AVAILABLE else image_bytes
+                            
+                            # Info sul bounding box
+                            bbox_info = None 
+                            try:
+                                img_rects = page.get_image_rects(img_info_tuple)
+                                if img_rects and isinstance(img_rects[0], fitz.Rect):
+                                    bbox_info = img_rects[0].irect
+                            except Exception as e_bbox:
+                                logger.debug(f"Impossibile ottenere bbox per immagine: {e_bbox}")
+                            
+                            images_data.append({
+                                "page_number": page_num + 1,
+                                "image_index_on_page": img_index,
+                                "image_bytes": processed_bytes,
+                                "image_format": "PNG",
+                                "xref": xref,
+                                "bbox": bbox_info,
+                                "page_has_text": len(page_text.strip()) > 50
+                            })
+                    except Exception as e_img:
+                        logger.error(f"Errore nell'estrazione immagine xref {xref}: {e_img}")
+                        continue
                         
-                        images_data.append({
-                            "page_number": page_num + 1,
-                            "image_index_on_page": img_index,
-                            "image_bytes": processed_bytes,  # Usa l'immagine preprocessata
-                            "image_format": "PNG",
-                            "xref": xref,
-                            "bbox": bbox_info,
-                            "page_has_text": len(page_text.strip()) > 50  # Flag per sapere se la pagina ha già testo
-                        })
-                except Exception as e_img:
-                    logger.error(f"Errore nell'estrazione immagine xref {xref}: {e_img}")
-                    continue
-                    
         except Exception as e_page:
             logger.error(f"Errore nella pagina {page_num + 1}: {e_page}")
             continue
@@ -314,7 +315,7 @@ class OptimizedRAGSystem:
         logger.debug(f"Configurazione RAG: {self.config}")
         
         # Log dello stato di Tesseract
-        if TESSERACT_CONFIGURED:
+        if TESSERACT_AVAILABLE and TESSERACT_CONFIGURED:
             logger.info("Tesseract OCR disponibile e configurato")
         else:
             logger.warning("Tesseract OCR non disponibile - L'estrazione testo da immagini sara disabilitata")
@@ -434,7 +435,7 @@ class OptimizedRAGSystem:
                     file_text_content = pdf_text
                     current_file_metadata.update(extracted_pdf_metadata)
                     
-                    if images_data and TESSERACT_CONFIGURED:
+                    if images_data and TESSERACT_AVAILABLE and TESSERACT_CONFIGURED:
                         logger.info(f"[PID:{pid}] RAG_CLASS._load_split: Trovate {len(images_data)} immagini in '{doc_file}'. Esecuzione OCR...")
                         ocr_texts_for_doc = []
                         
@@ -468,7 +469,7 @@ class OptimizedRAGSystem:
                         if ocr_texts_for_doc:
                             file_text_content += "\n\n" + "\n".join(ocr_texts_for_doc)
                             logger.info(f"[PID:{pid}] RAG_CLASS._load_split: Aggiunto testo OCR da {len(ocr_texts_for_doc)} immagini per '{doc_file}'.")
-                    elif images_data and not TESSERACT_CONFIGURED:
+                    elif images_data and not (TESSERACT_AVAILABLE and TESSERACT_CONFIGURED):
                         logger.warning(f"[PID:{pid}] RAG_CLASS._load_split: {len(images_data)} immagini trovate ma OCR non disponibile")
                         
                 except Exception as e:
@@ -618,8 +619,8 @@ class OptimizedRAGSystem:
                 "docs_directory": self.config["DOCS_DIRECTORY"],
                 "chroma_persist_directory": self.chroma_persist_directory,
                 "collection_name": self.collection_name,
-                "ocr_available": TESSERACT_CONFIGURED,
-                "ocr_language": self.config.get("TESSERACT_LANG", "ita") if TESSERACT_CONFIGURED else "N/A"
+                "ocr_available": TESSERACT_AVAILABLE and TESSERACT_CONFIGURED,
+                "ocr_language": self.config.get("TESSERACT_LANG", "ita") if (TESSERACT_AVAILABLE and TESSERACT_CONFIGURED) else "N/A"
             },
             "cache": cache_stats, 
             "vectorstore": {"status": "Non disponibile", "collection_count": 0}
@@ -662,7 +663,7 @@ async def init_rag_system() -> Optional[OptimizedRAGSystem]:
     return instance
 
 # Test rapido all'importazione
-if TESSERACT_CONFIGURED:
+if TESSERACT_AVAILABLE and TESSERACT_CONFIGURED:
     logger.info("Modulo OCR pronto per l'uso")
 else:
-    logger.warning("Modulo OCR non disponibile - verificare installazione Tesseract")
+    logger.warning("Modulo OCR non disponibile - verificare installazione Tesseract e PyMuPDF")
