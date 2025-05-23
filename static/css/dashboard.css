@@ -1,0 +1,432 @@
+/* static/css/dashboard.css */
+/* Reset e base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f6fa; /* Un grigio chiaro per lo sfondo */
+    color: #2c3e50; /* Un grigio scuro per il testo principale */
+    line-height: 1.6;
+    display: flex; /* Per centrare il contenuto se più piccolo del viewport */
+    flex-direction: column; /* Allinea gli elementi in colonna */
+    align-items: center; /* Centra orizzontalmente */
+}
+
+/* Dashboard Container */
+.dashboard {
+    width: 100%; /* Occupa tutta la larghezza disponibile */
+    min-height: 100vh;
+    padding: 20px;
+    max-width: 1400px; /* Limita la larghezza massima per schermi grandi */
+    margin: 0 auto; /* Centra il contenitore della dashboard */
+}
+
+/* Header */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 20px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Ombra più morbida */
+    margin-bottom: 30px;
+}
+
+.dashboard-header h1 {
+    color: #2c3e50;
+    font-size: 24px;
+    font-weight: 600; /* Leggermente più bold */
+}
+
+.dashboard-header h1 i {
+    color: #3498db; /* Blu primario */
+    margin-right: 12px;
+}
+
+.header-controls {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+#last-update {
+    font-size: 13px; /* Leggermente più grande */
+    color: #7f8c8d; /* Grigio per testo secondario */
+}
+
+/* Buttons */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px; /* Angoli più arrotondati */
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500; /* Peso del font */
+    transition: all 0.25s ease-out; /* Transizione più fluida */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Ombra leggera sui bottoni */
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.12); /* Ombra più pronunciata all'hover */
+}
+
+.btn:active {
+    transform: translateY(0px); /* Effetto pressione */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.btn-primary {
+    background: #3498db;
+    color: white;
+}
+
+.btn-secondary {
+    background: #95a5a6;
+    color: white;
+}
+
+.btn-warning {
+    background: #f39c12;
+    color: white;
+}
+
+.btn-info {
+    background: #17a2b8;
+    color: white;
+}
+
+/* Status Grid */
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); /* Minimo più grande */
+    gap: 25px; /* Spaziatura maggiore */
+    margin-bottom: 30px;
+}
+
+.status-card {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: flex-start; /* Allinea icone in alto */
+    gap: 20px;
+    transition: transform 0.25s ease-out, box-shadow 0.25s ease-out;
+}
+
+.status-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+
+.status-icon {
+    font-size: 28px; /* Icone più grandi */
+    color: #3498db;
+    padding-top: 5px; /* Allineamento verticale con il testo */
+}
+
+.status-indicator { /* Usato per l'icona di stato sistema */
+    font-size: 18px; /* Dimensione dell'indicatore di stato */
+}
+
+.status-indicator.online { color: #2ecc71; } /* Verde brillante */
+.status-indicator.offline { color: #e74c3c; } /* Rosso */
+.status-indicator.degraded { color: #f39c12; } /* Arancione */
+.status-indicator.unknown { color: #bdc3c7; } /* Grigio per sconosciuto */
+
+
+.status-content h3 {
+    font-size: 15px; /* Leggermente più grande */
+    color: #7f8c8d;
+    margin-bottom: 8px; /* Più spazio */
+    font-weight: 500;
+}
+
+.status-content p {
+    font-size: 30px; /* Testo metriche più grande */
+    font-weight: 600; /* Più bold */
+    color: #2c3e50;
+    margin-bottom: 8px;
+}
+
+.status-content small {
+    font-size: 13px;
+    color: #95a5a6;
+}
+
+/* Charts Grid */
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* Minimo più grande per i grafici */
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.chart-container {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    position: relative; /* CRUCIALE per Chart.js responsive */
+    height: 350px;    /* <<<<<<< ALTEZZA DEFINITA PER IL CONTENITORE DEL GRAFICO */
+                      /* Regola questo valore come necessario */
+}
+
+.chart-container h3 {
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.chart-container h3 i {
+    color: #3498db;
+    margin-right: 10px;
+}
+
+/* Health Section */
+.health-section {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
+}
+
+.health-section h3 {
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.health-section h3 i {
+    color: #e74c3c; /* Icona cuore rossa */
+    margin-right: 10px;
+}
+
+.health-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Adattato */
+    gap: 20px;
+}
+
+.health-item {
+    display: flex;
+    align-items: center;
+    padding: 20px; /* Più padding */
+    background: #f8f9fa; /* Sfondo leggermente diverso */
+    border-radius: 8px;
+    justify-content: space-between;
+    border-left: 4px solid transparent; /* Bordo per indicare stato */
+    transition: border-color 0.3s ease;
+}
+
+.health-item i:first-child { /* Icona del componente */
+    color: #3498db;
+    margin-right: 15px;
+    font-size: 20px;
+}
+.health-item span { /* Nome del componente */
+    flex-grow: 1;
+    font-weight: 500;
+}
+
+.health-status { /* Contenitore dell'icona di stato */
+    font-size: 22px;
+}
+.health-status i.fa-check-circle { color: #2ecc71; }
+.health-status i.fa-times-circle { color: #e74c3c; }
+.health-status i.fa-spinner { color: #f39c12; animation: spin 1.5s linear infinite; }
+
+/* Controls Section */
+.controls-section {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.controls-section h3 {
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.controls-section h3 i {
+    color: #9b59b6; /* Viola per i controlli */
+    margin-right: 10px;
+}
+
+.controls-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Adattato */
+    gap: 20px; /* Più spazio */
+}
+
+/* Modal */
+.modal {
+    display: none; /* Nascosto di default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.6); /* Sfondo più scuro */
+    align-items: center;
+    justify-content: center;
+    opacity: 0; /* Per animazione fade-in */
+    transition: opacity 0.3s ease;
+}
+.modal.show { /* Classe per mostrare il modal con animazione */
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background: white;
+    padding: 35px; /* Più padding */
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.25);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px; /* Spazio tra icona e testo */
+}
+
+.modal-content i.fa-spinner { /* Icona spinner nel modal */
+    font-size: 30px; /* Più grande */
+    color: #3498db;
+    /* Animazione spin definita sotto o usa quella di FontAwesome se già presente */
+}
+.modal-content p {
+    font-size: 16px;
+    color: #2c3e50;
+}
+
+/* Notification System (stili base, possono essere migliorati) */
+#notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.notification {
+    padding: 15px 20px;
+    border-radius: 8px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 300px;
+    max-width: 400px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    animation: notification-slideIn 0.3s ease-out;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.notification-success { background: #27ae60; }
+.notification-error { background: #e74c3c; }
+.notification-info { background: #3498db; }
+.notification span { flex-grow: 1; }
+.notification-close-btn {
+    background: none; border: none; color: white;
+    cursor: pointer; padding: 0 5px; font-size: 20px;
+    line-height: 1; opacity: 0.7;
+}
+.notification-close-btn:hover { opacity: 1; }
+.notification-fade-out { opacity: 0; transform: translateX(20px); }
+
+@keyframes notification-slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+
+/* Responsive */
+@media (max-width: 992px) { /* Tablet */
+    .charts-grid {
+        grid-template-columns: 1fr; /* Grafici in colonna */
+    }
+    .chart-container {
+        height: 320px; /* Altezza leggermente ridotta per tablet */
+    }
+}
+
+@media (max-width: 768px) { /* Mobile */
+    .dashboard {
+        padding: 15px; /* Meno padding su mobile */
+    }
+    
+    .dashboard-header {
+        flex-direction: column;
+        gap: 20px; /* Più spazio quando in colonna */
+        text-align: center;
+        padding: 20px;
+    }
+    
+    .header-controls {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+    
+    .status-grid,
+    .health-grid,
+    .controls-grid {
+        grid-template-columns: 1fr; /* Tutto in singola colonna */
+    }
+
+    .chart-container {
+        height: 300px; /* Altezza ridotta per mobile */
+        padding: 20px;
+    }
+    .chart-container h3 {
+        font-size: 16px;
+    }
+
+    .status-card {
+        flex-direction: column; /* Icona sopra il testo nelle card */
+        align-items: center;
+        text-align: center;
+    }
+    .status-icon {
+        padding-top: 0;
+    }
+}
+
+/* Animazioni */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.fa-spin { /* Assicura che l'animazione spin di FontAwesome sia definita se non lo è già */
+    animation: spin 2s infinite linear;
+}
+
+.pulse { /* Esempio di animazione pulse */
+    animation: pulse-animation 2s infinite;
+}
+
+@keyframes pulse-animation {
+    0% { opacity: 1; }
+    50% { opacity: 0.6; }
+    100% { opacity: 1; }
+}

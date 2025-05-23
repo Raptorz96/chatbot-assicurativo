@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Chatbot Assicurativo</title>
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script> <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <header class="dashboard-header">
+            <h1><i class="fas fa-robot"></i> Chatbot Assicurativo Dashboard</h1>
+            <div class="header-controls">
+                <span id="last-update">Ultimo aggiornamento: --</span>
+                <button id="refresh-btn" class="btn btn-primary">
+                    <i class="fas fa-sync-alt"></i> Aggiorna
+                </button>
+                <a href="/" class="btn btn-secondary" title="Torna alla Chat">
+                    <i class="fas fa-arrow-left"></i> Torna al Chat
+                </a>
+            </div>
+        </header>
+
+        <div class="status-grid">
+            <div class="status-card">
+                <div class="status-icon">
+                    <i class="fas fa-circle status-indicator unknown" id="system-status"></i> 
+                </div>
+                <div class="status-content">
+                    <h3>Sistema</h3>
+                    <p id="system-status-text">--</p>
+                    <small id="system-uptime">--</small>
+                </div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <div class="status-content">
+                    <h3>Conversazioni Oggi</h3>
+                    <p id="today-conversations">--</p>
+                    <small>Totale: <span id="total-conversations">--</span></small>
+                </div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-icon">
+                    <i class="fas fa-stopwatch"></i> </div>
+                <div class="status-content">
+                    <h3>Tempo Risposta</h3>
+                    <p id="avg-response-time">--</p>
+                    <small>Tempo medio di elaborazione</small>
+                </div>
+            </div>
+
+            <div class="status-card">
+                <div class="status-icon">
+                    <i class="fas fa-hdd"></i> </div>
+                <div class="status-content">
+                    <h3>Cache Items</h3>
+                    <p id="cache-size">--</p>
+                    <small>Hit rate: <span id="cache-hit-rate">--</span></small>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-container">
+                <h3><i class="fas fa-chart-line"></i> Attività Ultime 24 Ore</h3>
+                <canvas id="activity-chart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h3><i class="fas fa-tachometer-alt"></i> Performance Sistema (Placeholder)</h3>
+                <canvas id="performance-chart"></canvas>
+            </div>
+        </div>
+
+        <div class="health-section">
+            <h3><i class="fas fa-heartbeat"></i> Salute del Sistema</h3>
+            <div class="health-grid">
+                <div class="health-item">
+                    <i class="fas fa-database"></i>
+                    <span>Database</span>
+                    <div class="health-status" id="health-database">
+                        <i class="fas fa-spinner fa-spin"></i> </div>
+                </div>
+                <div class="health-item">
+                    <i class="fas fa-brain"></i>
+                    <span>Sistema RAG</span>
+                    <div class="health-status" id="health-rag">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                </div>
+                <div class="health-item">
+                    <i class="fas fa-archive"></i>
+                    <span>Cache</span>
+                    <div class="health-status" id="health-cache">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls-section">
+            <h3><i class="fas fa-cogs"></i> Controlli Sistema</h3>
+            <div class="controls-grid">
+                <button id="clear-cache-btn" class="btn btn-warning">
+                    <i class="fas fa-trash"></i> Pulisci Cache
+                </button>
+                <button id="reindex-rag-btn" class="btn btn-info" title="Funzionalità non ancora implementata">
+                    <i class="fas fa-sync"></i> Reindicizza RAG
+                </button>
+                <button id="toggle-cache-btn" class="btn btn-secondary" title="Funzionalità non ancora implementata">
+                    <i class="fas fa-toggle-on"></i> <span id="cache-toggle-text">Disabilita Cache</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading-modal" class="modal"> <div class="modal-content">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Caricamento...</p>
+        </div>
+    </div>
+
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>

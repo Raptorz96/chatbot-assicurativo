@@ -1,0 +1,1006 @@
+/* === I TUOI STILI CSS ORIGINALI === */
+:root {
+    --primary-color: #0056b3;       /* Valore originale */
+    --primary-light: #e6f2ff;      /* Valore originale */
+    --secondary-color: #28a745;     /* Valore originale */
+    --accent-color: #0088cc;        /* Valore originale */
+    --text-color: #333;             /* Valore originale */
+    --light-gray: #f5f5f5;         /* Valore originale */
+    --border-color: #ddd;           /* Valore originale */
+    --error-color: #dc3545;        /* Valore originale */
+    --warning-color: #ffc107;      /* Valore originale */
+    --success-color: #28a745;     /* Valore originale */
+    /* Variabile aggiunta per le migliorie */
+    --shadow-lg: 0 1rem 3rem rgba(0,0,0,.175); 
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: #f9f9f9; /* Leggermente più scuro del light-gray per contrasto container */
+    min-height: 100vh; /* Assicura che il footer stia in basso */
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px 20px 20px; /* Rimosso padding-top per gestirlo con header */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* HEADER ORIGINALE MODIFICATO IN header-enhanced più sotto */
+/* header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 30px;
+} */
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--primary-color); /* Colore primario per il logo */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo i {
+    color: var(--secondary-color); /* Colore secondario per l'icona */
+}
+
+.tagline {
+    color: #666;
+    font-size: 16px;
+    /* margin-left: 20px; se l'header non è enhanced */
+}
+
+/* CONTROLS ORIGINALE MODIFICATO IN header-enhanced più sotto */
+/* .controls {
+    display: flex;
+    gap: 15px;
+} */
+
+.dashboard-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    background: #3498db; /* Colore specifico, potrebbe usare var(--accent-color) */
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    /* margin: 10px; Rimosso, gestito da flex in .controls */
+    transition: background 0.3s ease;
+}
+
+.dashboard-link:hover {
+    background: #2980b9;
+    color: white;
+}
+
+
+.main-content {
+    display: flex;
+    flex: 1; /* Occupa lo spazio rimanente */
+    gap: 30px;
+    margin-top: 30px; /* Spazio dall'header */
+}
+
+.info-panel {
+    flex: 1; /* Occupa una delle due colonne */
+    background-color: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column; /* Per far funzionare status-panel in fondo */
+}
+
+.chat-container { /* Stili base, verranno estesi da .chat-container-enhanced */
+    flex: 1; /* Occupa l'altra colonna */
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    overflow: hidden; /* Per i bordi arrotondati del contenuto */
+    height: 75vh; /* Altezza definita per chat container */
+    max-height: 700px; /* Altezza massima */
+}
+
+.chat-header { /* Stili base, verranno estesi da .chat-header-enhanced */
+    background-color: var(--primary-color);
+    color: white;
+    padding: 15px 20px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.chat-header .bot-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: white;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold; /* Già presente */
+    color: var(--primary-color); /* Icona robot */
+}
+
+.chat-messages {
+    flex: 1; /* Occupa spazio disponibile */
+    padding: 20px;
+    overflow-y: auto; /* Scrollbar se necessario */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    /* min-height: 400px; Rimosso, l'altezza è gestita da .chat-container */
+    /* max-height: 60vh; Rimosso */
+}
+
+.message { /* Stili base, verranno estesi da .message-enhanced */
+    max-width: 80%;
+    padding: 12px 18px;
+    border-radius: 18px; /* Default border-radius */
+    position: relative; /* Per eventuali ::before/::after */
+    line-height: 1.5; /* Migliore leggibilità */
+    word-wrap: break-word; /* Evita overflow orizzontale */
+}
+
+.user-message { /* Stili base, verranno estesi da .user-message-enhanced */
+    align-self: flex-end;
+    background-color: var(--accent-color);
+    color: white;
+    border-bottom-right-radius: 5px; /* Angolo "a punta" */
+}
+
+.bot-message { /* Stili base, verranno estesi da .bot-message-enhanced */
+    align-self: flex-start;
+    background-color: var(--light-gray);
+    border-bottom-left-radius: 5px; /* Angolo "a punta" */
+}
+
+.message-sources {
+    font-size: 0.8em;
+    margin-top: 8px; /* Aumentato spazio */
+    padding-top: 8px; /* Spazio sopra */
+    border-top: 1px dashed var(--border-color); /* Separatore leggero */
+    color: #555; /* Leggermente più scuro */
+}
+.message-sources strong {
+    color: var(--text-color);
+}
+.message-sources ul {
+    padding-left: 15px; /* Indentazione per la lista delle fonti */
+    margin-top: 5px;
+    margin-bottom: 0; /* Rimuove spazio extra sotto la lista */
+}
+.message-sources li {
+    font-style: italic;
+    font-size: 0.95em;
+    margin-bottom: 3px; /* Spazio tra le fonti */
+    list-style-type: disc; /* Pallino standard */
+}
+.message-sources li::before { /* Rimuove il custom bullet se si usa list-style-type */
+    content: none;
+}
+
+
+.suggested-actions-container { /* Modificato da .suggested-actions */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px; /* Più spazio sopra */
+    padding-top: 10px; /* Spazio sopra dentro il contenitore */
+    border-top: 1px dashed var(--border-color);
+}
+
+.action-button {
+    background-color: white;
+    border: 1px solid var(--accent-color);
+    color: var(--accent-color);
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    font-size: 0.9em;
+    display: inline-flex; /* Per allineare icona e testo */
+    align-items: center;
+    gap: 6px; /* Spazio tra icona e testo */
+    text-decoration: none; /* Rimuove sottolineatura se usato come link */
+}
+
+.action-button:hover {
+    background-color: var(--accent-color);
+    color: white;
+    transform: translateY(-1px); /* Leggero effetto al passaggio del mouse */
+    box-shadow: 0 2px 5px rgba(0,136,204,0.2);
+}
+
+.action-button i {
+    font-size: 0.9em; /* Dimensione icona relativa al testo */
+}
+
+.chat-input { /* Stili base, verranno estesi da .chat-input-enhanced */
+    padding: 15px 20px;
+    display: flex;
+    gap: 10px;
+    background-color: var(--light-gray); /* Coerente con .bot-message */
+    border-top: 1px solid var(--border-color);
+}
+
+#user-input {
+    flex: 1; /* Occupa lo spazio rimanente */
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 25px; /* Input arrotondato */
+    outline: none; /* Rimuove outline di default */
+    font-size: 1em;
+    transition: border-color 0.3s, box-shadow 0.3s; /* Transizioni fluide */
+}
+
+#user-input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(0, 136, 204, 0.15); /* Ombra al focus */
+}
+
+#send-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 50%; /* Pulsante circolare */
+    width: 44px; /* Dimensione fissa */
+    height: 44px; /* Dimensione fissa */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease-in-out;
+}
+
+#send-button:hover {
+    background-color: var(--accent-color); /* Colore al passaggio del mouse */
+}
+
+#send-button i {
+    font-size: 1.1em; /* Dimensione icona */
+}
+
+
+.typing-indicator { /* Contenitore dei pallini */
+    display: flex;
+    align-items: center;
+    /* margin-top: 5px; Rimosso, gestito dal padding di .bot-message */
+    padding: 5px 0; /* Aggiunge un po' di spazio verticale */
+}
+
+.typing-indicator span { /* Singolo pallino */
+    height: 8px;
+    width: 8px;
+    border-radius: 50%;
+    background-color: #b0b0b0; /* Colore pallini più scuro */
+    display: inline-block;
+    margin: 0 2px; /* Spazio tra i pallini */
+    animation: typing 1.2s infinite ease-in-out; /* Animazione leggermente più lenta */
+}
+
+.typing-indicator span:nth-child(1) { animation-delay: 0s; }
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+
+@keyframes typing {
+    0%, 100% { transform: translateY(0) scale(1); opacity: 0.7; }
+    50% { transform: translateY(-4px) scale(1.1); opacity: 1; }
+}
+
+
+h1, h2, h3 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+h1 { font-size: 24px; }
+h2 { font-size: 20px; }
+h3 { font-size: 16px; margin-top: 20px;}
+
+p { margin-bottom: 15px; }
+
+ul {
+    padding-left: 20px; /* Spazio per i pallini */
+    margin-bottom: 15px;
+}
+
+li {
+    margin-bottom: 8px;
+    list-style-type: none; /* Rimuove pallini di default per ::before */
+    position: relative;
+    padding-left: 5px; /* Spazio tra pallino e testo */
+}
+
+li::before { /* Stile personalizzato per i pallini */
+    content: "•";
+    color: var(--accent-color);
+    font-weight: bold;
+    display: inline-block;
+    position: absolute; /* Posizionamento preciso */
+    left: -10px; /* Sposta il pallino fuori dal padding-left */
+    top: 0;
+}
+
+.status-panel { /* Stili base, verranno estesi da .status-panel-enhanced */
+    margin-top: auto; /* Spinge in fondo a .info-panel se è flex-column */
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.status-indicator { /* Contenitore per un singolo stato (dot + testo) */
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.status-dot { /* Stili per il pallino di stato */
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 10px;
+    flex-shrink: 0; /* Evita che il pallino si rimpicciolisca */
+}
+.status-dot.online  { background-color: var(--success-color); box-shadow: 0 0 5px var(--success-color); }
+.status-dot.offline { background-color: var(--error-color);   box-shadow: 0 0 5px var(--error-color);   }
+.status-dot.pending { background-color: var(--warning-color); box-shadow: 0 0 5px var(--warning-color); }
+.status-dot.degraded { background-color: var(--warning-color); box-shadow: 0 0 5px var(--warning-color); } /* Aggiunto degraded */
+
+
+footer { /* Stili base, verranno estesi da .footer-enhanced */
+    margin-top: 30px;
+    text-align: center;
+    font-size: 0.9em;
+    color: #666;
+    padding: 20px 0; /* Aumentato padding */
+    border-top: 1px solid var(--border-color);
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        flex-direction: column;
+    }
+    .message { max-width: 90%; } /* Messaggi leggermente più larghi su mobile */
+    .info-panel { order: 2; } /* Info panel sotto la chat su mobile */
+    .chat-container { order: 1; height: 65vh; /* Altezza chat su mobile */ }
+    .tagline { display: none; } /* Nasconde tagline su mobile per spazio header */
+    .logo { font-size: 20px; }
+    .dashboard-link { padding: 8px 12px; font-size: 0.9em;}
+}
+
+/* === AGGIUNTE PER LE MIGLIORIE DELLA DEMO === */
+
+/* Demo Mode Banner */
+.demo-mode-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, var(--success-color), #20c997);
+    color: white;
+    padding: 8px 20px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 14px;
+    z-index: 1000;
+    display: none; /* Initially hidden */
+    animation: slideDown 0.3s ease-out;
+}
+.demo-mode-banner.active {
+    display: block;
+}
+.demo-mode-banner i {
+    margin-right: 8px;
+}
+@keyframes slideDown {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(0); }
+}
+
+/* Enhanced Header */
+header.header-enhanced { /* Usa header.header-enhanced per sovrascrivere selettori header esistenti */
+    display: flex; /* Assicura che sia flex se non lo era */
+    justify-content: space-between; /* Assicura allineamento */
+    align-items: center; /* Assicura allineamento */
+    padding: 15px 20px; /* Padding per l'header enhanced */
+    background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,250,252,0.95));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0,86,179,0.1);
+    box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+    margin-bottom: 0; /* Rimuove il margin-bottom dell'header base se presente, main-content avrà un margin-top */
+    position: sticky; /* Header appiccicoso */
+    top: 0;
+    z-index: 999; /* Sotto il demo-banner ma sopra il resto */
+}
+/* Contenitore per logo e tagline nell'header enhanced */
+.header-enhanced > div:first-child {
+    display: flex;
+    flex-direction: column; /* Logo sopra, tagline sotto */
+    align-items: flex-start;
+}
+.header-enhanced .tagline {
+    font-size: 13px; /* Più piccolo nell'header enhanced */
+    margin-left: 0; /* Allineato con il logo */
+    display: block; /* Assicura che sia visibile */
+}
+.header-stats {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-left: auto; /* Spinge le statistiche a sinistra dei controlli */
+    margin-right: 20px;
+}
+.stat-display {
+    text-align: center;
+    padding: 8px 12px;
+    background: rgba(0,86,179,0.05);
+    border-radius: 8px;
+    min-width: 80px;
+}
+.stat-display i {
+    color: var(--primary-color);
+    display: block;
+    margin-bottom: 4px;
+}
+.stat-value {
+    font-weight: bold;
+    color: var(--primary-color);
+    font-size: 16px;
+}
+.stat-label {
+    font-size: 11px;
+    color: #666;
+    margin-top: 2px;
+    display: block;
+}
+
+/* Demo Controls (dentro .controls dell'header) */
+.controls { /* Assicura che .controls sia flex se non lo è già */
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.demo-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.demo-btn {
+    padding: 8px 16px;
+    background: linear-gradient(135deg, var(--secondary-color), #34ce57);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.demo-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(40,167,69,0.3);
+}
+.demo-btn.active { /* Style for when demo mode is ON */
+    background: linear-gradient(135deg, var(--error-color), #e63946);
+}
+
+/* Quick Actions Panel */
+.quick-actions-panel {
+    background: linear-gradient(135deg, rgba(0,136,204,0.03), rgba(40,167,69,0.03));
+    border: 1px solid rgba(0,136,204,0.1);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+.quick-actions-title {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1em;
+}
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+}
+.quick-action-btn {
+    padding: 12px 16px;
+    background: white;
+    border: 1px solid var(--accent-color);
+    border-radius: 8px;
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    text-align: left;
+}
+.quick-action-btn:hover {
+    background: var(--accent-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,136,204,0.2);
+}
+.quick-action-btn i {
+    font-size: 16px;
+    width: 20px; /* Ensure consistent icon alignment */
+    text-align: center;
+    transition: color 0.2s ease;
+}
+.quick-action-btn:hover i {
+    color: white; /* Cambia colore icona su hover */
+}
+
+
+/* Business Metrics Display */
+.business-metrics {
+    background: linear-gradient(135deg, var(--secondary-color), #1dbf73); /* Gradiente più morbido */
+    color: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+    position: relative;
+    overflow: hidden;
+}
+.business-metrics::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    transform: rotate(45deg);
+    pointer-events: none;
+}
+.business-metrics-title {
+    color: white; /* Assicura che il titolo sia bianco */
+    font-weight: 700;
+    margin-bottom: 15px;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1em;
+}
+.metrics-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); /* Minimo più grande */
+    gap: 15px;
+    position: relative;
+    z-index: 1;
+}
+.metric-item {
+    text-align: center;
+    padding: 15px 12px; /* Più padding verticale */
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    transition: background 0.3s ease;
+}
+.metric-item:hover {
+    background: rgba(255,255,255,0.2);
+}
+.metric-value {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+.metric-label {
+    font-size: 12px;
+    opacity: 0.9;
+    line-height: 1.3;
+}
+
+/* Enhanced Chat Container */
+.chat-container.chat-container-enhanced {
+    background: linear-gradient(145deg, rgba(255,255,255,0.98), rgba(248,250,252,0.98)); /* Meno trasparente */
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(0,86,179,0.1);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+/* Enhanced Messages */
+.message.message-enhanced {
+    position: relative;
+    animation: messageSlide 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Animazione più fluida */
+    border-radius: 12px;
+    padding: 14px 20px; /* Padding aumentato */
+}
+@keyframes messageSlide {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.bot-message.bot-message-enhanced {
+    background: linear-gradient(135deg, #f7f9fc, #ffffff); /* Leggermente diverso */
+    border: 1px solid rgba(0,136,204,0.15); /* Bordo più visibile */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    color: var(--text-color);
+}
+.user-message.user-message-enhanced {
+    background: linear-gradient(135deg, var(--accent-color), #00aaff); /* Gradiente diverso */
+    box-shadow: 0 2px 8px rgba(0,136,204,0.25);
+    color: white;
+}
+
+/* Chat Header Enhancement */
+.chat-header.chat-header-enhanced {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    position: relative;
+    overflow: hidden;
+    color: white;
+    padding: 15px 20px; /* Consistente con .chat-input */
+}
+.chat-header-enhanced::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    animation: headerShine 3.5s infinite linear; /* Più lento e lineare */
+}
+@keyframes headerShine {
+    0% { left: -120%; } /* Parte da più lontano */
+    100% { left: 120%; } /* Arriva più lontano */
+}
+.chat-header-enhanced .bot-avatar { /* Stili per avatar nell'header enhanced */
+    position: relative;
+    background-color: rgba(255,255,255,0.2); /* Sfondo leggermente trasparente */
+    color: white; /* Icona bianca */
+}
+.bot-status-indicator { /* Per l'avatar nel chat-header */
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    width: 10px;
+    height: 10px;
+    background: var(--success-color);
+    border: 2px solid var(--primary-color); /* Bordo colore header per fusione */
+    border-radius: 50%;
+    animation: statusPulse 2s infinite ease-in-out;
+}
+@keyframes statusPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* Performance Indicator */
+.performance-indicator {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Ombra più definita */
+    font-size: 13px;
+    color: var(--text-color);
+    font-weight: 600;
+    z-index: 100;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.performance-indicator.hidden { /* Classe per nascondere */
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+}
+.performance-indicator i {
+    color: var(--success-color);
+    margin-right: 6px;
+}
+
+/* Enhanced Input Area */
+.chat-input.chat-input-enhanced {
+    background: linear-gradient(145deg, rgba(255,255,255,0.98), rgba(248,250,252,0.98));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(0,86,179,0.1);
+    padding: 10px 15px; /* Padding ridotto */
+}
+.chat-input-enhanced #user-input { /* Input specifico nell'area enhanced */
+    padding: 10px 15px; /* Padding ridotto per input */
+}
+.input-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: 10px;
+}
+.input-action-btn {
+    width: 38px; /* Leggermente più grande */
+    height: 38px; /* Leggermente più grande */
+    border: none;
+    background: var(--light-gray);
+    border-radius: 8px; /* Più arrotondato */
+    color: #555; /* Colore icona più scuro */
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.input-action-btn:hover:not(:disabled) {
+    background: var(--accent-color);
+    color: white;
+    transform: translateY(-1px);
+}
+.input-action-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* Character Counter */
+.character-counter {
+    position: absolute;
+    bottom: calc(100% + 4px); /* Sopra l'input field */
+    right: 10px;
+    font-size: 11px;
+    color: #888; /* Colore più chiaro */
+    background-color: rgba(240,240,240,0.9);
+    padding: 2px 5px;
+    border-radius: 4px;
+    transition: color 0.3s ease;
+}
+.character-counter.warning { color: var(--warning-color); font-weight: 500; }
+.character-counter.danger { color: var(--error-color); font-weight: 600; }
+
+
+/* Enhanced Status Panel */
+.status-panel.status-panel-enhanced {
+    background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(248,250,252,0.9));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(0,86,179,0.1);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: auto; /* Assicura che sia in fondo a info-panel */
+}
+.status-panel-enhanced h3 {
+    margin-bottom: 12px; /* Ridotto margin sotto h3 */
+}
+.status-grid {
+    display: grid;
+    gap: 12px;
+}
+.status-item-enhanced {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Per allineare l'indicatore a destra */
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.7);
+    border-radius: 8px;
+    border: 1px solid rgba(0,86,179,0.05);
+    transition: all 0.2s ease;
+}
+.status-item-enhanced:hover {
+    background: rgba(255,255,255,0.95); /* Più opaco su hover */
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0,86,179,0.08);
+}
+/* Contenitore per dot e testo dentro status-item-enhanced */
+.status-item-enhanced .status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Spazio tra pallino e testo */
+    margin-bottom: 0; /* Rimuove margin-bottom se ereditato */
+}
+
+/* Rimuove ::before per gli li se dentro .message-sources */
+.message-sources li::before {
+    content: none; /* Non vogliamo il bullet custom se usiamo list-style-type */
+}
+.message-sources li {
+    list-style-type: disc; /* O 'circle' o altro standard */
+    margin-left: 15px; /* Indentazione per i bullet standard */
+    padding-left: 0; /* Rimuove padding se il bullet è gestito da list-style */
+}
+
+
+.status-item-enhanced.healthy { border-left: 4px solid var(--success-color); }
+.status-item-enhanced.warning { border-left: 4px solid var(--warning-color); }
+.status-item-enhanced.error {   border-left: 4px solid var(--error-color); }
+.status-item-enhanced.degraded { border-left: 4px solid var(--warning-color); } /* Per stato degradato */
+
+
+/* Enhanced Footer */
+footer.footer-enhanced { /* Usa footer.footer-enhanced per specificità */
+    background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,250,252,0.95));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(0,86,179,0.1);
+    padding: 20px 0; /* Aumentato padding */
+    margin-top: 30px;
+    font-size: 13px;
+}
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px; /* Coerente con .container */
+    margin: 0 auto;
+    padding: 0 20px;
+}
+.footer-stats {
+    display: flex;
+    gap: 25px; /* Aumentato gap */
+    font-size: 12px;
+    color: #555; /* Testo più scuro */
+}
+.footer-stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.footer-stat i {
+    color: var(--primary-color);
+    font-size: 1.1em; /* Icone leggermente più grandi */
+}
+
+/* Response Time Animation */
+.response-time {
+    display: inline-block;
+    font-weight: bold;
+    color: var(--success-color);
+    position: relative;
+    transition: color 0.3s ease, transform 0.3s ease; /* Aggiunta transform */
+}
+.response-time.updating {
+    animation: responseUpdate 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Animazione con "rimbalzo" */
+}
+@keyframes responseUpdate {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); color: var(--accent-color); }
+}
+
+/* Notification Enhancement */
+.notification {
+    position: fixed;
+    bottom: 20px; /* Notifiche in basso */
+    right: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.18); /* Ombra più marcata */
+    padding: 16px 22px; /* Più padding */
+    z-index: 1001;
+    max-width: 380px; /* Leggermente più largo */
+    transform: translateX(calc(100% + 30px)); /* Parte da più lontano */
+    transition: transform 0.45s cubic-bezier(0.165, 0.84, 0.44, 1); /* Transizione più elegante */
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.notification.show {
+    transform: translateX(0);
+}
+.notification::before { /* Icona come pseudo-elemento */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900; /* Solid icons */
+    font-size: 20px;
+    flex-shrink: 0;
+}
+.notification.success { border-left: 5px solid var(--success-color); }
+.notification.success::before { content: "\f058"; color: var(--success-color); }
+.notification.warning { border-left: 5px solid var(--warning-color); }
+.notification.warning::before { content: "\f071"; color: var(--warning-color); }
+.notification.error { border-left: 5px solid var(--error-color); }
+.notification.error::before { content: "\f057"; color: var(--error-color); }
+.notification.info { border-left: 5px solid var(--primary-color); }
+.notification.info::before { content: "\f05a"; color: var(--primary-color); }
+
+.notification-content {
+    flex-grow: 1;
+    font-size: 0.95em;
+    line-height: 1.4;
+}
+.notification-close-btn {
+    background: none;
+    border: none;
+    color: #999; /* Colore più chiaro */
+    cursor: pointer;
+    padding: 0; /* Rimuove padding per allineamento */
+    margin-left: 10px; /* Spazio dal testo */
+    font-size: 22px;
+    line-height: 1;
+    opacity: 0.7;
+    transition: color 0.2s ease, opacity 0.2s ease;
+}
+.notification-close-btn:hover {
+    color: #333;
+    opacity: 1;
+}
+
+/* Utility Classes per Demo */
+.demo-highlight {
+    background: linear-gradient(135deg, rgba(255,235,59,0.25), rgba(255,193,7,0.15));
+    padding: 5px 10px; /* Più padding */
+    border-radius: 6px;
+    font-weight: 500; /* Meno bold per subtleness */
+    border: 1px solid rgba(255,193,7,0.35);
+    color: #493802; /* Testo più scuro per contrasto */
+    display: block; /* Per occupare tutta la larghezza disponibile e margin */
+    margin-top: 12px;
+    font-size: 0.9em;
+}
+.demo-highlight i {
+    margin-right: 6px;
+}
+.demo-badge {
+    background: var(--success-color);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+
+/* Loading Shimmer (per indicatori di caricamento futuri) */
+.loading-shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite linear;
+    border-radius: 4px;
+    color: transparent !important; /* Nasconde il testo sottostante */
+    user-select: none; /* Non selezionabile */
+}
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* Ulteriori aggiustamenti responsive */
+@media (max-width: 992px) { /* Tablet */
+    .header-stats { display: none; } /* Nasconde statistiche su tablet */
+}
+@media (max-width: 768px) { /* Mobile (già presenti, ma per consolidare) */
+    header.header-enhanced {
+        padding: 10px 15px; /* Padding ridotto per header su mobile */
+        position: static; /* Rimuove sticky su mobile se causa problemi di layout */
+    }
+    .header-enhanced .tagline { display: block; font-size: 12px; } /* Mostra tagline, ma più piccola */
+
+    .quick-actions-grid { grid-template-columns: 1fr; }
+    .metrics-row { grid-template-columns: repeat(2, 1fr); }
+    .performance-indicator { font-size: 12px; padding: 8px 12px; }
+    .input-actions { margin-left: 8px; }
+    .footer-content { flex-direction: column; gap: 12px; }
+    .footer-stats { justify-content: center; }
+}

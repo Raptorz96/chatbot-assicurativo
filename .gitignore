@@ -1,0 +1,177 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv/
+.ENV/
+.env/
+
+# Environment Variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# API Keys and Secrets
+*.key
+*.pem
+secrets.json
+config_local.py
+
+# Database Files
+*.db
+*.sqlite3
+*.sqlite
+chatbot.db
+chatbot_conversations.db
+data/smart_cache.db
+
+# ChromaDB Persist Directory
+chroma_db_persist/
+chroma_test/
+chroma_test_langchain/
+test_chroma_db/
+
+# Log Files
+logs/
+*.log
+*.log.*
+performance_metrics.json
+
+# IDE and Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Testing
+test_*.py
+*_test.py
+tests/__pycache__/
+
+# Temporary Files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Windows
+*.exe
+*.msi
+*.msm
+*.msp
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# OCR temporary files
+tessdata/
+*.png
+*.jpg
+*.jpeg
+*.tiff
+*.bmp
+
+# Performance and monitoring data
+monitoring/
+metrics/
+
+# Cache directories
+.cache/
+cache/
+
+# Node modules (if any frontend dependencies)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Documentation build
+docs/_build/
+docs/build/
+
+# Sensitive documents (if any)
+documents/private/
+docs/private/
+
+# Local configuration overrides
+config_override.py
+local_settings.py
+
+# Deployment files
+docker-compose.override.yml
+.dockerignore.local
+kubernetes-secrets.yaml
+
+# SSL certificates
+*.crt
+*.cer
+*.p12
+*.pfx
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# AWS
+.aws/
+
+# Google Cloud
+gcloud/
+*.json
+service-account-*.json
+
+# Azure
+.azure/
