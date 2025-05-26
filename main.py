@@ -133,13 +133,13 @@ except ImportError as e:
         message_lower = message.lower()
         
         if any(word in message_lower for word in ['ciao', 'salve', 'buongiorno', 'buonasera']):
-            return Intent(type="saluto", confidence=0.9, entities=[])
+            return Intent(type="saluto", confidence=0.9, entities={})
         elif any(word in message_lower for word in ['grazie', 'ringrazio', 'perfetto']):
-            return Intent(type="ringraziamento", confidence=0.9, entities=[])
+            return Intent(type="ringraziamento", confidence=0.9, entities={})
         elif any(word in message_lower for word in ['ciao', 'arrivederci', 'addio']):
-            return Intent(type="congedo", confidence=0.9, entities=[])
+            return Intent(type="congedo", confidence=0.9, entities={})
         else:
-            return Intent(type="domanda_assicurazione", confidence=0.8, entities=[])
+            return Intent(type="domanda_assicurazione", confidence=0.8, entities={})
 
 # Dialogue Manager con fallback
 try:
