@@ -1,6 +1,7 @@
 # main.py - Custom RAG System Integration
 # Railway Compatible - Zero LangChain dependencies
 
+import time
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse, FileResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
