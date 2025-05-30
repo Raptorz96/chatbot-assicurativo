@@ -1,5 +1,5 @@
-# main.py - Custom RAG System Integration
-# Railway Compatible - Zero LangChain dependencies
+# main.py - Custom RAG System Integration + React SPA + MIME Types Fix
+# Railway Compatible - Zero LangChain dependencies + React Frontend
 
 import time
 from fastapi import FastAPI, Request, HTTPException
@@ -15,13 +15,13 @@ from contextlib import asynccontextmanager
 import asyncio 
 import psutil 
 
-# ===== IMPORTS CORE =====
+# ===== IMPORTS CORE (mantenuti identici) =====
 from app.config import APP_HOST, APP_PORT, DEBUG, LOG_LEVEL, APP_VERSION 
 from app.utils.logging_config import logger
 from app.utils.db_manager import db_manager, init_database
 from app.models.schemas import ChatRequest, ChatResponse, Intent 
 
-# ===== CUSTOM RAG SYSTEM =====
+# ===== CUSTOM RAG SYSTEM (mantenuto identico) =====
 try:
     from app.modules.rag_system import init_rag_system, CustomRAGEngine
     RAG_SYSTEM_AVAILABLE = True
@@ -30,7 +30,7 @@ except ImportError as e:
     logger.error(f"❌ Custom RAG System non disponibile: {e}")
     RAG_SYSTEM_AVAILABLE = False
     
-    # Emergency fallback
+    # Emergency fallback (identico)
     class CustomRAGEngine:
         def __init__(self):
             self.is_initialized = False
@@ -50,7 +50,7 @@ except ImportError as e:
     async def init_rag_system():
         return CustomRAGEngine()
 
-# ===== FALLBACK COMPONENTS =====
+# ===== FALLBACK COMPONENTS (mantenuti identici) =====
 # Intent Analyzer con fallback
 try:
     from app.modules.intent_analyzer import analyze_intent
@@ -146,7 +146,7 @@ except ImportError as e:
     
     smart_cache = MockSmartCache()
 
-# ===== CONSTANTS =====
+# ===== CONSTANTS (mantenuti identici) =====
 APP_START_TIME = datetime.datetime.now(timezone.utc)
 DIRECT_RESPONSE_INTENTS: List[str] = ["saluto", "ringraziamento", "congedo"]
 DIRECT_RESPONSE_CONFIDENCE_THRESHOLD: float = 0.8
@@ -206,8 +206,8 @@ async def lifespan(app: FastAPI):
 
 # Crea app FastAPI
 app = FastAPI(
-    title="Chatbot Assicurativo Custom RAG",
-    description="Sistema RAG personalizzato per assistenza assicurazioni - Railway Compatible",
+    title="Chatbot Assicurativo Custom RAG + React UI",
+    description="Sistema RAG personalizzato per assistenza assicurazioni con React Frontend - Railway Compatible",
     version=APP_VERSION, 
     lifespan=lifespan
 )
@@ -227,7 +227,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ===== API ENDPOINTS =====
+# ===== API ENDPOINTS (mantenuti identici) =====
 
 @app.post("/api/chat", response_model=ChatResponse, tags=["Chat"])
 async def chat_endpoint(request: Request, chat_request: ChatRequest): 
@@ -378,7 +378,7 @@ async def health_check_endpoint(request: Request):
     return {
         "status": overall_status,
         "timestamp": datetime.datetime.now(timezone.utc).isoformat(),
-        "deployment": "Railway - Custom RAG",
+        "deployment": "Railway - Custom RAG + React UI",
         "components": {
             "database_connection": {"status": "ok" if db_ok else "error", "details": details_db},
             "rag_system": {"status": "ready" if rag_is_initialized else "not_ready", 
@@ -466,7 +466,7 @@ async def get_dashboard_data_endpoint(request: Request):
                 "status": "online" if rag_initialized_val else "degraded",
                 "uptime": uptime_str,
                 "version": APP_VERSION,
-                "deployment": "Railway - Custom RAG"
+                "deployment": "Railway - Custom RAG + React UI"
             },
             "conversation_stats": {
                 "total_conversations": total_conversations_count,
@@ -534,41 +534,92 @@ async def clear_system_cache_endpoint(request: Request):
         "status": "success",
         "timestamp": datetime.datetime.now(timezone.utc).isoformat(),
         "message": " | ".join(messages),
-        "deployment": "Railway - Custom RAG"
+        "deployment": "Railway - Custom RAG + React UI"
     }
 
-# ===== STATIC FILES =====
+# ===== STATIC FILES E SPA ROUTING =====
 static_dir_name = "static"
 static_dir_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), static_dir_name)
 
+# ⚡ CRITICAL FIX: Mount static files BEFORE catch-all routes
 if os.path.isdir(static_dir_path):
-    app.mount(f"/{static_dir_name}", StaticFiles(directory=static_dir_path, html=True), name=static_dir_name) 
-    logger.info(f"File statici serviti da: {static_dir_path}")
-    
-    @app.get("/dashboard", include_in_schema=False, tags=["Static Content"])
-    async def serve_dashboard_html(): 
-        dashboard_html_path = os.path.join(static_dir_path, "dashboard.html")
-        if os.path.exists(dashboard_html_path):
-            return FileResponse(dashboard_html_path)
-        logger.error(f"Dashboard non trovata: {static_dir_path}")
-        return RedirectResponse(url="/docs")
+    # Mount static files per assets (JS, CSS, ecc.) - PRIORITÀ ALTA
+    app.mount("/assets", StaticFiles(directory=os.path.join(static_dir_path, "assets")), name="assets")
+    app.mount("/static", StaticFiles(directory=static_dir_path), name="static") 
+    logger.info(f"✅ File statici montati: {static_dir_path}")
+    logger.info(f"✅ Assets montati: {os.path.join(static_dir_path, 'assets')}")
+else:
+    logger.warning(f"⚠️  Directory static non trovata: {static_dir_path}")
 
-@app.get("/", include_in_schema=False, tags=["Static Content"])
-async def root_serve_chatbot_ui(): 
-    if os.path.isdir(static_dir_path):
-        chatbot_index_path = os.path.join(static_dir_path, "index.html")
-        if os.path.exists(chatbot_index_path):
-            return FileResponse(chatbot_index_path)
-        dashboard_html_path = os.path.join(static_dir_path, "dashboard.html")
-        if os.path.exists(dashboard_html_path):
-            return RedirectResponse(url="/dashboard") 
-    return RedirectResponse(url="/docs")
+# ===== SPECIFIC ROUTES FOR REACT ASSETS =====
+@app.get("/vite.svg", include_in_schema=False)
+async def serve_vite_icon():
+    """Serve Vite favicon"""
+    icon_path = os.path.join(static_dir_path, "vite.svg")
+    if os.path.exists(icon_path):
+        return FileResponse(icon_path, media_type="image/svg+xml")
+    return JSONResponse({"error": "Icon not found"}, status_code=404)
+
+# ===== LEGACY DASHBOARD ENDPOINT =====
+@app.get("/dashboard", include_in_schema=False, tags=["Legacy"])
+async def legacy_dashboard():
+    """Legacy dashboard - serve old dashboard.html if exists"""
+    dashboard_html_path = os.path.join(static_dir_path, "dashboard.html")
+    if os.path.exists(dashboard_html_path):
+        logger.info(f"Serving legacy dashboard: {dashboard_html_path}")
+        return FileResponse(dashboard_html_path)
+    else:
+        # React dashboard via SPA routing
+        return await serve_react_app("dashboard")
+
+# ===== REACT SPA ROUTING (MUST BE LAST) =====
+@app.get("/{full_path:path}", include_in_schema=False, tags=["React SPA"])
+async def serve_react_app(full_path: str):
+    """Serve React SPA - gestisce tutte le routes non API - DEVE ESSERE ULTIMA"""
+    
+    # Skip API routes e assets
+    if (full_path.startswith("api/") or 
+        full_path.startswith("docs") or 
+        full_path.startswith("redoc") or
+        full_path.startswith("assets/") or
+        full_path.startswith("static/") or
+        full_path.endswith(".js") or
+        full_path.endswith(".css") or
+        full_path.endswith(".svg") or
+        full_path.endswith(".ico")):
+        raise HTTPException(status_code=404, detail=f"File not found: {full_path}")
+    
+    # Serve index.html per tutte le routes React (SPA routing)
+    index_path = os.path.join(static_dir_path, "index.html")
+    
+    if os.path.exists(index_path):
+        logger.debug(f"Serving React SPA per path: /{full_path}")
+        return FileResponse(index_path, media_type="text/html")
+    
+    # Fallback: no React build found
+    logger.error(f"React build non trovato in: {static_dir_path}")
+    return JSONResponse(
+        status_code=503,
+        content={
+            "error": "Frontend non disponibile",
+            "message": "Il frontend React non è stato buildato. Esegui 'npm run build' nella directory frontend.",
+            "api_docs": "/docs",
+            "health_check": "/api/health",
+            "static_path_checked": static_dir_path,
+            "index_exists": os.path.exists(index_path) if index_path else False
+        }
+    )
+
+@app.get("/", include_in_schema=False, tags=["React SPA"])
+async def root_serve_react():
+    """Root path - serve React app"""
+    return await serve_react_app("")
 
 if __name__ == "__main__":
     # Record start time
     app.state.start_time = time.time()
     
-    logger.info(f"🚀 Avvio Custom RAG Chatbot su http://{APP_HOST}:{APP_PORT}")
+    logger.info(f"🚀 Avvio Custom RAG Chatbot + React UI su http://{APP_HOST}:{APP_PORT}")
     logger.info(f"Debug: {DEBUG}, LogLevel: {LOG_LEVEL}")
     
     uvicorn.run(

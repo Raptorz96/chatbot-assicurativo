@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/components/connectionindicator.tsx","./src/components/ui/button.tsx","./src/config/api.ts","./src/config/enviroments.ts","./src/pages/chatpage.tsx","./src/pages/testminimal.tsx","./src/pages/testpage.tsx","./src/services/api.ts","./src/types/api.ts","./vite.config.ts"],"errors":true,"version":"5.8.3"}

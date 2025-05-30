@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AssistentIA Pro - Demo Tecnica</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header-enhanced">
+            <div>
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i> AssistentIA Pro
+                </div>
+                <div class="tagline">Chatbot Assicurativo con IA Avanzata</div>
+            </div>
+
+            <div class="controls">
+                <div class="demo-controls">
+                    </div>
+                <a href="/dashboard" class="dashboard-link">
+                    <i class="fas fa-chart-bar"></i> Dashboard
+                </a>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="info-panel">
+                <h2>Benvenuto in AssistentIA Pro</h2>
+                <p>Questo chatbot assicurativo sfrutta un sistema RAG (Retrieval-Augmented Generation) per fornire risposte accurate e contestuali.
+                   Utilizza il pannello "Demo Tecnica" (che apparirà nell'header dopo il caricamento dello script relativo) per esplorare le funzionalità specifiche del sistema.</p>
+                
+                <div class="quick-actions-panel">
+                    <div class="quick-actions-title">
+                        <i class="fas fa-bolt"></i>
+                        Azioni Rapide (Query Reali)
+                    </div>
+                    <div class="quick-actions-grid">
+                        <button class="quick-action-btn" data-message="Vorrei un preventivo per assicurare la mia BMW Serie 7">
+                            <i class="fas fa-car"></i>
+                            Preventivo Auto Premium
+                        </button>
+                        <button class="quick-action-btn" data-message="Ho avuto un incidente, cosa devo fare?">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Gestione Sinistro
+                        </button>
+                         <button class="quick-action-btn" data-message="Vorrei informazioni sulla mia polizza casa per una villa">
+                            <i class="fas fa-home"></i>
+                            Info Polizza Casa
+                        </button>
+                    </div>
+                </div>
+                
+                <h3>Prova a chiedere direttamente al chatbot:</h3>
+                <ul>
+                    <li>Informazioni sulle nostre polizze auto</li>
+                    <li>Quanto costa un'assicurazione casa</li>
+                    <li>Cosa fare in caso di sinistro</li>
+                </ul>
+
+                <h3>Caratteristiche Chiave del Sistema:</h3>
+                <ul>
+                    <li><i class="fas fa-robot"></i> <strong>Natural Language Processing (NLP)</strong></li>
+                    <li><i class="fas fa-search-location"></i> <strong>Retrieval-Augmented Generation (RAG)</strong></li>
+                    <li><i class="fas fa-sitemap"></i> <strong>Dialog Management</strong></li>
+                    <li><i class="fas fa-plug"></i> <strong>API Integration Ready</strong></li>
+                    <li><i class="fas fa-shield-alt"></i> <strong>Error Handling & Robustness</strong></li>
+                </ul>
+                
+                <div class="status-panel status-panel-enhanced">
+                    <h3>Stato del sistema</h3>
+                    <div class="status-grid">
+                        <div class="status-item-enhanced healthy"> 
+                            <div class="status-indicator"> 
+                                <div id="system-status" class="status-dot online"></div> 
+                                <span>Sistema Globale</span>
+                            </div>
+                        </div>
+                        <div class="status-item-enhanced healthy"> 
+                            <div class="status-indicator"> 
+                                <div id="rag-status" class="status-dot online"></div> 
+                                <span>Sistema RAG</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-container chat-container-enhanced">
+                <div class="chat-header chat-header-enhanced">
+                    <div class="bot-avatar">
+                        <i class="fas fa-robot"></i>
+                        <div class="bot-status-indicator"></div>
+                    </div>
+                    AssistentIA Pro
+                    <span id="chat-header-status" style="margin-left: 10px; font-size: 12px; opacity: 0.9;">Online e pronto</span>
+                </div>
+                <div class="chat-messages" id="chat-messages">
+                    </div>
+                <div class="chat-input chat-input-enhanced">
+                    <div style="position: relative; flex: 1;">
+                        <input type="text" id="user-input" placeholder="Scrivi qui la tua domanda..." autofocus>
+                        <div class="character-counter" id="char-counter">0/300</div> 
+                    </div>
+                    <div class="input-actions">
+                        <button class="input-action-btn" id="voice-btn" title="Input vocale (presto)" disabled>
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                        <button class="input-action-btn" id="attach-btn" title="Allega file (presto)" disabled>
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                    </div>
+                    <button id="send-button">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer-enhanced">
+             <div class="footer-content">
+                <div>
+                    <p>© 2025 AssistentIA Pro - v.1.2.2 TechFocus - Chatbot Assicurativo </p>
+                </div>
+                </div>
+        </footer>
+    </div>
+
+    <script src="/static/js/script.js"></script>
+    <script src="/static/js/script-enhancements.js"></script> <script src="/static/js/demo-technical.js"></script> 
+</body>
+</html>
