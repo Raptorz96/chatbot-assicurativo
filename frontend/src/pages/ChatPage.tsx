@@ -1155,61 +1155,59 @@ export const ChatPage: React.FC = () => {
           
           {/* MOBILE HEADER */}
           <motion.div 
-            className="bg-slate-900/20 backdrop-blur-sm border-b border-white/10 px-4 py-3"
+            className="header-container"
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.1 }}
           >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <motion.div 
-                  className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-500 rounded-lg flex items-center justify-center text-white text-lg shadow-lg"
-                  whileHover={{ scale: 1.05 }}
-                  animate={connectionStatus === 'online' ? {
-                    boxShadow: ['0 0 0 0 rgba(34, 197, 94, 0.7)', '0 0 0 8px rgba(34, 197, 94, 0)']
-                  } : {}}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  🛡️
-                </motion.div>
-                <div>
-                  <h1 className="text-lg font-bold text-white flex items-center gap-2">
-                    AssistentIA Pro
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                    >
-                      <SparklesIcon className="w-4 h-4 text-yellow-400" />
-                    </motion.div>
-                  </h1>
-                  <p className="text-white/60 text-xs">Custom RAG • Railway</p>
-                </div>
+            <div className="header-left">
+              <motion.div 
+                className="header-logo"
+                whileHover={{ scale: 1.05 }}
+                animate={connectionStatus === 'online' ? {
+                  boxShadow: ['0 0 0 0 rgba(34, 197, 94, 0.7)', '0 0 0 8px rgba(34, 197, 94, 0)']
+                } : {}}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                🛡️
+              </motion.div>
+              <div className="header-title-group">
+                <h1 className="header-title">
+                  AssistentIA Pro
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                  >
+                    <SparklesIcon className="w-4 h-4 text-yellow-400" />
+                  </motion.div>
+                </h1>
+                <p className="header-subtitle">Custom RAG • Railway</p>
               </div>
-              
-              <div className="flex items-center gap-2">
-                {/* Connection Status */}
-                <motion.div 
-                  className={`flex items-center gap-1 px-2 py-1 rounded-full ${connectionIndicator.bgColor} border border-white/20`}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  <connectionIndicator.icon className={`w-3 h-3 ${connectionIndicator.color}`} />
-                  <span className={`text-xs font-medium ${connectionIndicator.color}`}>
-                    {connectionIndicator.text}
-                  </span>
-                </motion.div>
+            </div>
+            
+            <div className="header-right">
+              {/* Connection Status */}
+              <motion.div 
+                className={`header-status ${connectionIndicator.bgColor}`}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.3 }}
+              >
+                <connectionIndicator.icon className={`w-3 h-3 ${connectionIndicator.color}`} />
+                <span className={`text-xs font-medium ${connectionIndicator.color}`}>
+                  {connectionIndicator.text}
+                </span>
+              </motion.div>
 
-                <motion.button
-                  className="px-2 py-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg flex items-center gap-1 shadow-lg text-xs font-medium"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => window.open('/dashboard', '_blank')}
-                >
-                  <ChartBarIcon className="w-3 h-3" />
-                  Dashboard
-                </motion.button>
-              </div>
+              <motion.button
+                className="header-button"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => window.open('/dashboard', '_blank')}
+              >
+                <ChartBarIcon className="w-3 h-3" />
+                Dashboard
+              </motion.button>
             </div>
           </motion.div>
 
@@ -1294,14 +1292,14 @@ export const ChatPage: React.FC = () => {
             
             {/* HEADER DESKTOP */}
             <motion.div 
-              className="flex items-center justify-between p-6 bg-slate-900/20 backdrop-blur-sm border-b border-white/10 rounded-t-xl"
+              className="header-container"
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.1 }}
             >
-              <div className="flex items-center gap-3">
+              <div className="header-left">
                 <motion.div 
-                  className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-500 rounded-xl flex items-center justify-center text-white text-lg shadow-lg"
+                  className="header-logo"
                   whileHover={{ scale: 1.05 }}
                   animate={connectionStatus === 'online' ? {
                     boxShadow: ['0 0 0 0 rgba(34, 197, 94, 0.7)', '0 0 0 10px rgba(34, 197, 94, 0)']
@@ -1310,8 +1308,8 @@ export const ChatPage: React.FC = () => {
                 >
                   🛡️
                 </motion.div>
-                <div>
-                  <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+                <div className="header-title-group">
+                  <h1 className="header-title">
                     AssistentIA Pro
                     <motion.div
                       animate={{ rotate: 360 }}
@@ -1320,25 +1318,25 @@ export const ChatPage: React.FC = () => {
                       <SparklesIcon className="w-6 h-6 text-yellow-400" />
                     </motion.div>
                   </h1>
-                  <p className="text-white/60 text-base">RAG System • Railway Backend</p>
+                  <p className="header-subtitle">RAG System • Railway Backend</p>
                 </div>
               </div>
               
-              <div className="flex items-center gap-3">
+              <div className="header-right">
                 <motion.div 
-                  className={`flex items-center gap-2 px-3 py-2 rounded-full ${connectionIndicator.bgColor} border border-white/20`}
+                  className={`header-status ${connectionIndicator.bgColor}`}
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.3 }}
                 >
                   <connectionIndicator.icon className={`w-4 h-4 ${connectionIndicator.color}`} />
-                  <span className={`text-sm font-medium ${connectionIndicator.color}`}>
+                  <span className={`${connectionIndicator.color}`}>
                     {connectionIndicator.text}
                   </span>
                 </motion.div>
 
                 <motion.button
-                  className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl flex items-center gap-2 shadow-lg hover:shadow-xl transition-all text-sm font-medium"
+                  className="header-button"
                   whileHover={{ scale: 1.02, y: -1 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => window.open('/dashboard', '_blank')}
