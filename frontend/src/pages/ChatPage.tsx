@@ -1109,13 +1109,17 @@ export const ChatPage: React.FC = () => {
 
   return (
     <div 
-      className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 relative overflow-hidden"
       style={{
+        minHeight: '100vh',
+        height: '100vh',
         width: '100vw',
         minWidth: '100vw',
         maxWidth: 'none',
         margin: 0,
-        padding: 0
+        padding: 0,
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0f172a 100%)',
+        position: 'relative',
+        overflow: 'hidden'
       }}
     >
       
@@ -1151,65 +1155,142 @@ export const ChatPage: React.FC = () => {
       {/* ===== CONDITIONAL LAYOUT RENDERING ===== */}
       {isMobile ? (
         /* 📱 MOBILE LAYOUT - Tab System */
-        <div className="relative z-10 h-screen flex flex-col">
+        <div style={{
+          position: 'relative',
+          zIndex: 10,
+          height: '100vh',
+          width: '100vw',
+          display: 'flex',
+          flexDirection: 'column',
+          margin: 0,
+          padding: 0,
+          overflow: 'hidden'
+        }}>
           
-          {/* MOBILE HEADER */}
-          <motion.div 
-            className="header-container"
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.1 }}
+          {/* MOBILE HEADER con STILI INLINE AGGRESSIVI */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              width: '100%',
+              minHeight: '70px',
+              height: '70px',
+              padding: '1rem',
+              paddingTop: 'max(1rem, env(safe-area-inset-top))',
+              background: 'rgba(30, 41, 59, 0.9)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+              position: 'sticky',
+              top: 0,
+              zIndex: 100,
+              flexShrink: 0,
+              boxSizing: 'border-box'
+            }}
           >
-            <div className="header-left">
-              <motion.div 
-                className="header-logo"
-                whileHover={{ scale: 1.05 }}
-                animate={connectionStatus === 'online' ? {
-                  boxShadow: ['0 0 0 0 rgba(34, 197, 94, 0.7)', '0 0 0 8px rgba(34, 197, 94, 0)']
-                } : {}}
-                transition={{ duration: 2, repeat: Infinity }}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              flex: 1,
+              minWidth: 0
+            }}>
+              <div 
+                style={{
+                  width: '2.5rem',
+                  height: '2.5rem',
+                  background: 'linear-gradient(to bottom right, #4ade80, #22c55e)',
+                  borderRadius: '0.5rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1rem',
+                  color: 'white',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                  flexShrink: 0
+                }}
               >
                 🛡️
-              </motion.div>
-              <div className="header-title-group">
-                <h1 className="header-title">
+              </div>
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                minWidth: 0,
+                flex: 1
+              }}>
+                <h1 style={{
+                  fontSize: '1.125rem',
+                  fontWeight: 700,
+                  color: 'white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  margin: 0,
+                  lineHeight: 1.2
+                }}>
                   AssistentIA Pro
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                  >
-                    <SparklesIcon className="w-4 h-4 text-yellow-400" />
-                  </motion.div>
+                  <span style={{ fontSize: '1rem' }}>✨</span>
                 </h1>
-                <p className="header-subtitle">Custom RAG • Railway</p>
+                <p style={{
+                  fontSize: '0.75rem',
+                  color: 'rgba(255, 255, 255, 0.6)',
+                  margin: 0,
+                  lineHeight: 1.2
+                }}>Custom RAG • Railway</p>
               </div>
             </div>
             
-            <div className="header-right">
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              flexShrink: 0
+            }}>
               {/* Connection Status */}
-              <motion.div 
-                className={`header-status ${connectionIndicator.bgColor}`}
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.3 }}
+              <div 
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.25rem',
+                  padding: '0.25rem 0.5rem',
+                  borderRadius: '9999px',
+                  fontSize: '0.75rem',
+                  fontWeight: 500,
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  background: connectionStatus === 'online' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)',
+                  color: connectionStatus === 'online' ? '#22c55e' : '#ef4444'
+                }}
               >
-                <connectionIndicator.icon className={`w-3 h-3 ${connectionIndicator.color}`} />
-                <span className={`text-xs font-medium ${connectionIndicator.color}`}>
-                  {connectionIndicator.text}
+                <span style={{ fontSize: '0.75rem' }}>
+                  {connectionStatus === 'online' ? '●' : '●'}
                 </span>
-              </motion.div>
+                <span>{connectionIndicator.text}</span>
+              </div>
 
-              <motion.button
-                className="header-button"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+              <button
+                style={{
+                  padding: '0.375rem 0.75rem',
+                  background: 'linear-gradient(to right, #3b82f6, #2563eb)',
+                  color: 'white',
+                  borderRadius: '0.5rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.25rem',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                  fontSize: '0.75rem',
+                  fontWeight: 500,
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
                 onClick={() => window.open('/dashboard', '_blank')}
               >
-                <ChartBarIcon className="w-3 h-3" />
-                Dashboard
-              </motion.button>
+                📊 Dashboard
+              </button>
             </div>
-          </motion.div>
+          </div>
 
           {/* MOBILE TAB NAVIGATION */}
           <motion.div 
@@ -1262,8 +1343,9 @@ export const ChatPage: React.FC = () => {
       ) : (
         /* 🖥️ DESKTOP LAYOUT con SIDEBAR */
         <div 
-          className="relative z-10 desktop-container"
           style={{
+            position: 'relative',
+            zIndex: 10,
             height: '100vh',
             width: '100vw',
             display: 'flex',
@@ -1276,8 +1358,7 @@ export const ChatPage: React.FC = () => {
         >
           
           {/* LEFT PANEL - DESKTOP con SIDEBAR */}
-          <motion.div 
-            className="desktop-left-panel"
+          <div 
             style={{
               flex: 1,
               minHeight: '100%',
@@ -1285,21 +1366,50 @@ export const ChatPage: React.FC = () => {
               display: 'flex',
               flexDirection: 'column'
             }}
-            initial={{ x: -50, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.6 }}
           >
             
-            {/* HEADER DESKTOP */}
+            {/* HEADER DESKTOP con STILI INLINE */}
             <motion.div 
-              className="header-container"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                width: '100%',
+                minHeight: '80px',
+                padding: '1.5rem',
+                background: 'rgba(30, 41, 59, 0.2)',
+                backdropFilter: 'blur(16px)',
+                WebkitBackdropFilter: 'blur(16px)',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '0.75rem 0.75rem 0 0',
+                position: 'relative',
+                zIndex: 10
+              }}
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.1 }}
             >
-              <div className="header-left">
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                flex: 1,
+                minWidth: 0
+              }}>
                 <motion.div 
-                  className="header-logo"
+                  style={{
+                    width: '3rem',
+                    height: '3rem',
+                    background: 'linear-gradient(to bottom right, #4ade80, #22c55e)',
+                    borderRadius: '0.75rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1.125rem',
+                    color: 'white',
+                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                    flexShrink: 0
+                  }}
                   whileHover={{ scale: 1.05 }}
                   animate={connectionStatus === 'online' ? {
                     boxShadow: ['0 0 0 0 rgba(34, 197, 94, 0.7)', '0 0 0 10px rgba(34, 197, 94, 0)']
@@ -1308,8 +1418,22 @@ export const ChatPage: React.FC = () => {
                 >
                   🛡️
                 </motion.div>
-                <div className="header-title-group">
-                  <h1 className="header-title">
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  minWidth: 0,
+                  flex: 1
+                }}>
+                  <h1 style={{
+                    fontSize: '1.5rem',
+                    fontWeight: 700,
+                    color: 'white',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    margin: 0,
+                    lineHeight: 1.2
+                  }}>
                     AssistentIA Pro
                     <motion.div
                       animate={{ rotate: 360 }}
@@ -1318,25 +1442,66 @@ export const ChatPage: React.FC = () => {
                       <SparklesIcon className="w-6 h-6 text-yellow-400" />
                     </motion.div>
                   </h1>
-                  <p className="header-subtitle">RAG System • Railway Backend</p>
+                  <p style={{
+                    fontSize: '1rem',
+                    color: 'rgba(255, 255, 255, 0.6)',
+                    margin: 0,
+                    lineHeight: 1.2
+                  }}>RAG System • Railway Backend</p>
                 </div>
               </div>
               
-              <div className="header-right">
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                flexShrink: 0
+              }}>
                 <motion.div 
-                  className={`header-status ${connectionIndicator.bgColor}`}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    padding: '0.5rem 0.75rem',
+                    borderRadius: '9999px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    fontSize: '0.875rem',
+                    fontWeight: 500,
+                    backdropFilter: 'blur(8px)',
+                    WebkitBackdropFilter: 'blur(8px)',
+                    ...(connectionStatus === 'online' ? {
+                      background: 'rgba(34, 197, 94, 0.2)',
+                      color: '#22c55e'
+                    } : {
+                      background: 'rgba(239, 68, 68, 0.2)', 
+                      color: '#ef4444'
+                    })
+                  }}
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.3 }}
                 >
                   <connectionIndicator.icon className={`w-4 h-4 ${connectionIndicator.color}`} />
-                  <span className={`${connectionIndicator.color}`}>
-                    {connectionIndicator.text}
-                  </span>
+                  <span>{connectionIndicator.text}</span>
                 </motion.div>
 
                 <motion.button
-                  className="header-button"
+                  style={{
+                    padding: '0.5rem 1rem',
+                    background: 'linear-gradient(to right, #3b82f6, #2563eb)',
+                    color: 'white',
+                    borderRadius: '0.75rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                    transition: 'all 0.3s ease',
+                    textDecoration: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontSize: '0.875rem',
+                    fontWeight: 500
+                  }}
                   whileHover={{ scale: 1.02, y: -1 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => window.open('/dashboard', '_blank')}
@@ -1431,12 +1596,19 @@ export const ChatPage: React.FC = () => {
             </div>
 
             {/* BOTTOM BORDER */}
-            <div className="bg-white/5 backdrop-blur-xl border border-white/10 border-t-0 rounded-b-xl h-4"></div>
-          </motion.div>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderTop: 'none',
+              borderRadius: '0 0 0.75rem 0.75rem',
+              height: '4px'
+            }}></div>
+          </div>
 
           {/* RIGHT PANEL - DESKTOP CHAT */}
-          <motion.div 
-            className="desktop-right-panel"
+          <div 
             style={{
               flex: 1,
               minHeight: '100%',
@@ -1444,52 +1616,78 @@ export const ChatPage: React.FC = () => {
               display: 'flex',
               flexDirection: 'column'
             }}
-            initial={{ x: 50, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.6 }}
           >
             
             {/* CHAT HEADER */}
-            <motion.div 
-              className="bg-white/10 backdrop-blur-xl border border-white/20 border-b-0 rounded-t-xl p-6 shadow-lg"
-              initial={{ y: -20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.2 }}
+            <div 
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(16px)',
+                WebkitBackdropFilter: 'blur(16px)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                borderBottom: 'none',
+                borderRadius: '0.75rem 0.75rem 0 0',
+                padding: '1.5rem',
+                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem'
+              }}
             >
-              <div className="flex items-center gap-3">
-                <motion.div 
-                  className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg"
-                  animate={connectionStatus === 'online' ? { 
-                    boxShadow: ['0 0 0 0 rgba(59, 130, 246, 0.5)', '0 0 0 8px rgba(59, 130, 246, 0)']
-                  } : {}}
-                  transition={{ duration: 3, repeat: Infinity }}
-                >
-                  🤖
-                </motion.div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-white font-semibold text-xl">AssistentIA Pro</h3>
-                    <motion.div
-                      className={`w-2 h-2 rounded-full ${
-                        connectionStatus === 'online' ? 'bg-green-400' : 'bg-red-400'
-                      }`}
-                      animate={{ opacity: [1, 0.4, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    />
-                    <span className={`text-sm font-medium ${
-                      connectionStatus === 'online' ? 'text-green-400' : 'text-red-400'
-                    }`}>
-                      {connectionIndicator.text}
-                    </span>
-                  </div>
-                  <p className="text-white/60 text-base">
-                    {connectionStatus === 'online' 
-                      ? 'Custom RAG System • 19 documenti assicurativi'
-                      : 'Connessione al backend in corso...'}
-                  </p>
-                </div>
+              <div 
+                style={{
+                  width: '3rem',
+                  height: '3rem',
+                  background: 'linear-gradient(to bottom right, #3b82f6, #2563eb)',
+                  borderRadius: '0.75rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                }}
+              >
+                🤖
               </div>
-            </motion.div>
+              <div style={{ flex: 1 }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem'
+                }}>
+                  <h3 style={{
+                    color: 'white',
+                    fontWeight: 600,
+                    fontSize: '1.25rem',
+                    margin: 0
+                  }}>AssistentIA Pro</h3>
+                  <div
+                    style={{
+                      width: '0.5rem',
+                      height: '0.5rem',
+                      borderRadius: '50%',
+                      background: connectionStatus === 'online' ? '#22c55e' : '#ef4444'
+                    }}
+                  />
+                  <span style={{
+                    fontSize: '0.875rem',
+                    fontWeight: 500,
+                    color: connectionStatus === 'online' ? '#22c55e' : '#ef4444'
+                  }}>
+                    {connectionIndicator.text}
+                  </span>
+                </div>
+                <p style={{
+                  color: 'rgba(255, 255, 255, 0.6)',
+                  fontSize: '1rem',
+                  margin: 0
+                }}>
+                  {connectionStatus === 'online' 
+                    ? 'Custom RAG System • 19 documenti assicurativi'
+                    : 'Connessione al backend in corso...'}
+                </p>
+              </div>
+            </div>
 
             {/* DESKTOP CHAT CONTENT */}
             <div className="flex-1 bg-white/5 backdrop-blur-xl border border-white/10 border-t-0 border-b-0 overflow-hidden flex flex-col shadow-lg">
@@ -1497,8 +1695,16 @@ export const ChatPage: React.FC = () => {
             </div>
 
             {/* BOTTOM BORDER */}
-            <div className="bg-white/5 backdrop-blur-xl border border-white/10 border-t-0 rounded-b-xl h-4"></div>
-          </motion.div>
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderTop: 'none',
+              borderRadius: '0 0 0.75rem 0.75rem',
+              height: '4px'
+            }}></div>
+          </div>
         </div>
       )}
     </div>
